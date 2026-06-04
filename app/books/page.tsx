@@ -22,7 +22,7 @@ const books = [
     id: 2,
     title: "The Empowered Teens Daily Affirmation",
     subtitle: "Cultivating Self-Confidence, Self-Acceptance, Self-Worth and the Love of God for Teens",
-    coverImage: "/teda.jpg",
+    coverImage: "/Teda.jpg",
     authors: "Co-authored with Nike Okeke",
     countries: [
       { name: "Canada", link: "https://a.co/d/6wGvrw7", flag: "🇨🇦" },
@@ -34,7 +34,7 @@ const books = [
     id: 3,
     title: "See the Bees",
     subtitle: "A Delightful Journey to a Bee Farm",
-    coverImage: "/stb.jpg",
+    coverImage: "/Stb.jpg",
     authors: "Co-authored with Dr. Olakunle Jaiyesimi",
     countries: [
       { name: "Canada", link: "https://a.co/d/2YKA3Er", flag: "🇨🇦" },
@@ -46,7 +46,7 @@ const books = [
     id: 4,
     title: "Ants and Termites",
     subtitle: "An Incredible World of Order",
-    coverImage: "/aat.jpg",
+    coverImage: "/Aat.jpg",
     authors: "Co-authored with Dr. Olakunle Jaiyesimi",
     countries: [
       { name: "Canada", link: "https://a.co/d/0wo8rxP", flag: "🇨🇦" },
@@ -58,7 +58,7 @@ const books = [
     id: 5,
     title: "Rhapsody of Love",
     subtitle: "Rediscovering Your Inner Harmony Through Love and Meditation",
-    coverImage: "/rol.jpg",
+    coverImage: "/Rol.jpg",
     authors: "",
     countries: [
       { name: "Canada", link: "https://a.co/d/aEvU3sj", flag: "🇨🇦" },
