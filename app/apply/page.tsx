@@ -4,23 +4,13 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
-  ChevronRight, 
   Send, 
-  User, 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Calendar, 
-  Globe, 
-  FileText,
-  DollarSign,
-  Users,
-  Eye,
-  Target,
-  CheckCircle
+  Loader2,
+  FileText
 } from "lucide-react";
 
 export default function ApplyPage() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     firstName: "",
     middleName: "",
@@ -75,10 +65,137 @@ export default function ApplyPage() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Function to generate formatted text file content
+  const generateApplicationText = () => {
+    return `
+================================================================================
+                    THRIVEON ENTREPRENEUR APPLICATION FORM
+                            Submission Date: ${new Date().toLocaleString()}
+================================================================================
+
+PERSONAL INFORMATION
+================================================================================
+Full Name: ${formData.firstName} ${formData.middleName} ${formData.lastName}
+Phone: ${formData.phone || 'N/A'}
+Email: ${formData.email || 'N/A'}
+Title: ${formData.title === "Others" ? formData.titleOther : formData.title || 'N/A'}
+LinkedIn: ${formData.linkedinUrl || 'N/A'}
+X/Twitter: ${formData.xUrl || 'N/A'}
+Current Location: ${formData.currentLocation || 'N/A'}
+Working Full-time on Startup: ${formData.workingFullTime || 'N/A'}
+Date of Birth: ${formData.dateOfBirth || 'N/A'}
+Gender: ${formData.gender || 'N/A'}
+Racial/Ethnic Minority: ${formData.racialMinority === "Others" ? formData.racialMinorityOther : formData.racialMinority || 'N/A'}
+
+STARTUP INFORMATION
+================================================================================
+Startup Name: ${formData.startupName || 'N/A'}
+Website URL: ${formData.websiteUrl || 'N/A'}
+Year Founded: ${formData.yearFounded || 'N/A'}
+Problem Statement: ${formData.problemStatement || 'N/A'}
+Solution Description: ${formData.solutionDescription || 'N/A'}
+Incorporated: ${formData.isIncorporated || 'N/A'}
+Industry: ${formData.relevantIndustries || 'N/A'}
+Business Address: ${formData.businessAddress || 'N/A'}
+Business in Restricted Countries: ${formData.restrictedCountries || 'N/A'}
+
+VIDEO & DECK LINKS
+================================================================================
+Product Demo Video: ${formData.productDemoUrl || 'N/A'}
+Team Introduction Video: ${formData.teamIntroUrl || 'N/A'}
+Pitch Deck: ${formData.pitchDeckUrl || 'N/A'}
+
+FINANCIAL INFORMATION
+================================================================================
+Has Revenue: ${formData.hasRevenue || 'N/A'}
+${formData.hasRevenue === "Yes" ? `Revenue (6 months): ${formData.revenueAmount || 'N/A'}` : ''}
+Has Funding: ${formData.hasFunding || 'N/A'}
+${formData.hasFunding === "Yes" ? `Funding Source: ${formData.fundingSource || 'N/A'}` : ''}
+${formData.hasFunding === "Yes" ? `Funding Amount: ${formData.fundingAmount || 'N/A'}` : ''}
+
+BUSINESS STRATEGY
+================================================================================
+Revenue Model: ${formData.revenueModel || 'N/A'}
+Target Audience: ${formData.targetAudience || 'N/A'}
+Competitors: ${formData.competitors || 'N/A'}
+Competitive Advantage: ${formData.competitiveAdvantage || 'N/A'}
+Timing: ${formData.timing || 'N/A'}
+Customer Acquisition: ${formData.customerAcquisition || 'N/A'}
+Next Milestones: ${formData.nextMilestones || 'N/A'}
+
+PROGRAM INFORMATION
+================================================================================
+Heard From: ${formData.heardFrom || 'N/A'}
+Program Selection: ${formData.programSelection || 'N/A'}
+
+AGREEMENTS
+================================================================================
+Agrees to Terms: ${formData.agreeTerms ? '✓ Yes' : '✗ No'}
+Agrees to Updates: ${formData.agreeUpdates ? '✓ Yes' : '✗ No'}
+
+================================================================================
+                          END OF APPLICATION
+                          Thank you for applying!
+================================================================================
+    `;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Application submitted successfully! We will review your application and get back to you soon.");
+    setIsSubmitting(true);
+
+    // Check if required fields are filled
+    if (!formData.agreeTerms) {
+      alert("Please agree to the Terms of Service and Privacy Policy to submit your application.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Generate the application text
+    const applicationText = generateApplicationText();
+    
+    // Create a blob for the text file
+    const blob = new Blob([applicationText], { type: 'text/plain' });
+    const fileUrl = URL.createObjectURL(blob);
+    
+    // Create a temporary link to download the file (backup for user)
+    // Then open email with the file
+    const subject = encodeURIComponent(`Startup Application: ${formData.startupName || 'New Application'} - ${formData.firstName} ${formData.lastName}`);
+    const body = encodeURIComponent(`
+Dear ThriveOn Team,
+
+Please find attached the completed application form for ${formData.startupName || 'our startup'}.
+
+Applicant: ${formData.firstName} ${formData.lastName}
+Email: ${formData.email}
+Phone: ${formData.phone}
+
+The complete application details are attached as a text file.
+
+Best regards,
+${formData.firstName} ${formData.lastName}
+    `);
+    
+    // For email with attachment, we need to use a workaround
+    // Since mailto doesn't support attachments directly, we'll provide both options
+    
+    // Option 1: Download file and inform user to attach it
+    const downloadLink = document.createElement('a');
+    downloadLink.href = fileUrl;
+    downloadLink.download = `ThriveOn_Application_${formData.startupName || 'Startup'}_${formData.firstName}.txt`;
+    downloadLink.click();
+    
+    // Option 2: Open email client with instructions
+    setTimeout(() => {
+      window.location.href = `mailto:info@ithriveonwisdom.com?subject=${subject}&body=${body}`;
+      alert("Application file has been downloaded. Please attach the downloaded file to the email that just opened and click send to complete your application.\n\nIf your email client didn't open, please manually email the downloaded file to info@ithriveonwisdom.com");
+    }, 500);
+    
+    // Cleanup
+    setTimeout(() => {
+      URL.revokeObjectURL(fileUrl);
+      setIsSubmitting(false);
+    }, 2000);
   };
 
   return (
@@ -713,18 +830,33 @@ export default function ApplyPage() {
               {/* Note */}
               <div className="mb-8 p-4 bg-blue-50 rounded-xl border border-blue-100">
                 <p className="text-blue-800 text-sm">
-                  <strong>Note:</strong> All information provided will be kept confidential and used solely for the purpose of evaluating your application for the ThriveOn Entrepreneur program. Once you complete all three stages of the application, a member of our team will review your submission and follow up with you accordingly. (Note: Any questions can be directed to info@ithriveonwisdom.com)
+                  <strong>Note:</strong> All information provided will be kept confidential and used solely for the purpose of evaluating your application for the ThriveOn Entrepreneur program. 
+                  Upon submission, a text file will be downloaded containing your application details. Please attach this file to the email that opens and send it to complete your application.
                 </p>
               </div>
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] flex items-center justify-center gap-2"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-blue-700 to-blue-600 text-white font-semibold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all hover:scale-[1.02] flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                Submit Application
-                <Send className="w-5 h-5" />
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Submit Application
+                    <FileText className="w-5 h-5" />
+                  </>
+                )}
               </button>
+              
+              <p className="text-center text-gray-500 text-sm mt-4">
+                Your application will be saved as a text file and attached to an email
+              </p>
             </form>
           </motion.div>
         </div>

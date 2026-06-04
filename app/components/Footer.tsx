@@ -2,9 +2,49 @@
 "use client";
 
 import Link from "next/link";
-import { MapPin, Mail, Clock } from "lucide-react";
+import { MapPin, Mail, Clock, Send } from "lucide-react";
+import { useState } from "react";
 
 export default function Footer() {
+
+
+const [newsletterEmail, setNewsletterEmail] = useState("");
+const [isSubscribing, setIsSubscribing] = useState(false);
+
+const handleNewsletterSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  setIsSubscribing(true);
+  
+  if (!newsletterEmail || !newsletterEmail.includes('@')) {
+    alert("Please enter a valid email address");
+    setIsSubscribing(false);
+    return;
+  }
+  
+  const subject = encodeURIComponent("Newsletter Subscription Request");
+  const body = encodeURIComponent(`
+Newsletter Subscription Request
+===============================
+
+Email: ${newsletterEmail}
+
+Please add this email to your newsletter subscription list.
+
+---
+Submitted from ThriveOn Website Footer
+  `);
+  
+  // Open email client
+  window.location.href = `mailto:info@ithriveonwisdom.com?subject=${subject}&body=${body}`;
+  
+  // Show confirmation message
+  setTimeout(() => {
+    alert("Thank you for subscribing! Please check your email client that just opened and click send to complete your subscription.");
+    setNewsletterEmail("");
+    setIsSubscribing(false);
+  }, 500);
+};
+
   return (
     <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       {/* Decorative top border */}
@@ -148,18 +188,33 @@ export default function Footer() {
 
             {/* Newsletter Signup */}
             <div>
-              <p className="text-gray-300 text-sm mb-3">Subscribe to our newsletter</p>
-              <div className="flex">
-                <input 
-                  type="email" 
-                  placeholder="Your email"
-                  className="flex-1 px-4 py-2 rounded-l-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 text-sm"
-                />
-                <button className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 rounded-r-lg hover:from-blue-700 hover:to-blue-800 transition-all text-white text-sm font-medium">
-                  Subscribe
-                </button>
-              </div>
-            </div>
+  <p className="text-gray-300 text-sm mb-3">Subscribe to our newsletter</p>
+  <form onSubmit={handleNewsletterSubmit} className="flex">
+    <input 
+      type="email" 
+      value={newsletterEmail}
+      onChange={(e) => setNewsletterEmail(e.target.value)}
+      placeholder="Your email"
+      required
+      className="flex-1 px-4 py-2 rounded-l-lg bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:border-amber-500 text-sm"
+    />
+    <button 
+      type="submit"
+      disabled={isSubscribing}
+      className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-700 rounded-r-lg hover:from-blue-700 hover:to-blue-800 transition-all text-white text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+    >
+      {isSubscribing ? (
+        <>Sending...</>
+      ) : (
+        <>
+          Subscribe
+          <Send className="w-3 h-3" />
+        </>
+      )}
+    </button>
+  </form>
+  <p className="text-gray-400 text-xs mt-2">We'll never share your email. Unsubscribe anytime.</p>
+</div>
           </div>
         </div>
 
