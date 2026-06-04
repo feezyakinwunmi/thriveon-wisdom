@@ -119,7 +119,7 @@ export default function Home() {
           {/* Circular Image Container */}
           <div className="relative w-80 h-80 md:w-96 md:h-96 rounded-full overflow-hidden shadow-2xl border-4 border-white">
             <Image
-              src="/business.png"
+              src="/biz.jpg"
               alt="Business mentorship"
               fill
               className="object-cover"
@@ -158,7 +158,7 @@ export default function Home() {
               }}
             >
               <Image
-                src="/business.png"
+                src="/hand.jpg"
                 alt="Learning new things"
                 fill
                 className="object-cover"
